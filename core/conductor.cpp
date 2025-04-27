@@ -6,12 +6,20 @@ Conductor *Conductor::get_singleton() {
 	return singleton;
 }
 
-float Conductor::measure_to_ms(float p_measure, float p_bpm, float p_time_signature_numerator) const {
-    return p_measure * (60000.0 / (p_bpm / p_time_signature_numerator));
+float Conductor::MeasureToMs(float measure, float bpm, float timeSignatureNumerator) const {
+    return measure * (60000.0f / (bpm / timeSignatureNumerator));
+}
+
+float Conductor::BeatsToMs(float beat, float bpm) {
+    return beat * (60000.0f / bpm);
+}
+
+float Conductor::StepsToMs(float step, float bpm, float timeSignatureDenominator) {
+    return step * (60000.0f / bpm / timeSignatureDenominator);
 }
 
 void Conductor::_bind_methods() {
-    ClassDB::bind_method(D_METHOD("measure_to_ms", "measure", "bpm", "time_signature_numerator"), &Conductor::measure_to_ms);
+    ClassDB::bind_method(D_METHOD("MeasuresToMs", "measure", "bpm", "time_signature_numerator"), &Conductor::MeasureToMs);
 }
 
 Conductor::Conductor() {

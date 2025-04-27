@@ -14,7 +14,10 @@ public:
 
     static Conductor *get_singleton();
 
-    float measure_to_ms(float p_measure, float p_bpm, float p_time_signature_numerator) const;
+    float MeasureToMs(float measure, float bpm, float timeSignatureNumerator) const;
+    float BeatsToMs(float beat, float bpm);
+    float StepsToMs(float step, float bpm, float timeSignatureDenominator);
+    //float MsToMeasures()
 
 protected:
     static Conductor *singleton;

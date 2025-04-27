@@ -8,4 +8,5 @@ env_rubicon_plus_plus = env_modules.Clone()
 
 env_rubicon_plus_plus.add_source_files(env.modules_sources, "*.cpp")
 env_rubicon_plus_plus.add_source_files(env.modules_sources, "./core/*.cpp")
+env_rubicon_plus_plus.add_source_files(env.modules_sources, "./core/chart/*.cpp")
 
