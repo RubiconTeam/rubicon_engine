@@ -11,19 +11,19 @@ class TimeChange : public RefCounted {
     GDCLASS(TimeChange, RefCounted);
 
 public:
-    float Time;
-    float Bpm;
-    float TimeSignatureNumerator = 4;
-    float TimeSignatureDenominator = 4;
+    float time;
+    float bpm;
+    float time_signature_numerator = 4;
+    float time_signature_denominator = 4;
 
-    float MsTime = 0.0;
+    float ms_time = 0.0;
 
-    void SetTime(const float time);
-	float GetTime() const;
+    void set_time(const float p_time);
+	float get_time() const;
 
-    float GetMeasureValue();
-    float GetBeatValue();
-    float GetStepValue();
+    float get_measure_value();
+    float get_beat_value();
+    float get_step_value();
 
 protected:
     static void _bind_methods();

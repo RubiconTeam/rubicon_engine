@@ -1,36 +1,36 @@
-#include "modules/rubicon_plus_plus/core/chart/time_change.h"
-#include "modules/rubicon_plus_plus/core/conductor.h"
+#include "rubicon_plus_plus/core/chart/time_change.h"
+#include "rubicon_plus_plus/core/conductor.h"
 
-void TimeChange::SetTime(const float time) {
-    Time = time;
+void TimeChange::set_time(const float p_time) {
+    time = p_time;
 }
 
-float TimeChange::GetTime() const {
-    return Time;
+float TimeChange::get_time() const {
+    return time;
 }
 
-float TimeChange::GetMeasureValue() {
-    return Conductor::get_singleton()->MeasureToMs(1.0f, Bpm, TimeSignatureNumerator);
+float TimeChange::get_measure_value() {
+    return Conductor::get_singleton()->measure_to_ms(1.0f, bpm, time_signature_numerator);
 }
 
-float TimeChange::GetBeatValue() {
-    return Conductor::get_singleton()->BeatsToMs(1.0f, Bpm);
+float TimeChange::get_beat_value() {
+    return Conductor::get_singleton()->beats_to_ms(1.0f, bpm);
 }
 
-float TimeChange::GetStepValue() {
-    return Conductor::get_singleton()->StepsToMs(1.0f, Bpm, TimeSignatureDenominator);
+float TimeChange::get_step_value() {
+    return Conductor::get_singleton()->steps_to_ms(1.0f, bpm, time_signature_denominator);
 }
 
 void TimeChange::_bind_methods() {
     // Methods
-    ClassDB::bind_method("GetMeasureValue", &TimeChange::GetMeasureValue);
-    ClassDB::bind_method("GetBeatValue", &TimeChange::GetBeatValue);
-    ClassDB::bind_method("GetStepValue", &TimeChange::GetStepValue);
+    ClassDB::bind_method("get_measure_value", &TimeChange::get_measure_value);
+    ClassDB::bind_method("get_beat_value", &TimeChange::get_beat_value);
+    ClassDB::bind_method("get_step_value", &TimeChange::get_step_value);
 
     // Getters and Setters
-    ClassDB::bind_method(D_METHOD("SetTime", "time"), &TimeChange::SetTime);
-	ClassDB::bind_method(D_METHOD("GetTime"), &TimeChange::GetTime);
+    ClassDB::bind_method(D_METHOD("set_time", "time"), &TimeChange::set_time);
+	ClassDB::bind_method(D_METHOD("get_time"), &TimeChange::get_time);
 
     // Fields
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "Time"), "SetTime", "GetTime");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "time"), "set_time", "get_ime");
 }

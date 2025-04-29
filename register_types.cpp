@@ -2,8 +2,8 @@
 
 #include "core/config/engine.h"
 #include "core/object/class_db.h"
-#include "modules/rubicon_plus_plus/core/conductor.h"
-#include "modules/rubicon_plus_plus/core/chart/time_change.h"
+#include "rubicon_plus_plus/core/conductor.h"
+#include "rubicon_plus_plus/core/chart/time_change.h"
 
 static Conductor *ConductorPtr;
 
