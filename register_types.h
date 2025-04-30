@@ -1,9 +1,9 @@
-#ifndef RUBICON_PLUS_PLUS_REGISTER_TYPES_H
-#define RUBICON_PLUS_PLUS_REGISTER_TYPES_H
+#ifndef RUBICON_REGISTER_TYPES_H
+#define RUBICON_REGISTER_TYPES_H
 
 #include "modules/register_module_types.h"
 
-void initialize_rubicon_plus_plus_module(ModuleInitializationLevel level);
-void uninitialize_rubicon_plus_plus_module(ModuleInitializationLevel level);
+void initialize_rubicon_module(ModuleInitializationLevel level);
+void uninitialize_rubicon_module(ModuleInitializationLevel level);
 
 #endif

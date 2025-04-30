@@ -4,9 +4,10 @@ from misc.utility.scons_hints import *
 Import("env")
 Import("env_modules")
 
-env_rubicon_plus_plus = env_modules.Clone()
+env_rubicon = env_modules.Clone()
 
-env_rubicon_plus_plus.add_source_files(env.modules_sources, "*.cpp")
-env_rubicon_plus_plus.add_source_files(env.modules_sources, "./core/*.cpp")
-env_rubicon_plus_plus.add_source_files(env.modules_sources, "./core/chart/*.cpp")
+env_rubicon.add_source_files(env.modules_sources, "*.cpp")
+
+# Add more like this here for more namespaces n stuff
+# env_rubicon.add_source_files(env.modules_sources, "./environment/*.cpp")
 
