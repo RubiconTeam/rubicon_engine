@@ -48,11 +48,11 @@ void BeatSyncer::set_value(const float p_value) {
             break;
 
         case TIME_VALUE_BEAT:
-            _set_bump_measure(Conductor::get_singleton()->beats_to_measures(p_value,4.0f));
+            _set_bump_measure(Conductor::beats_to_measures(p_value,4.0f));
             break;
 
         case TIME_VALUE_STEP:
-            _set_bump_measure(Conductor::get_singleton()->steps_to_measures(p_value,4.0f,4.0f));
+            _set_bump_measure(Conductor::steps_to_measures(p_value,4.0f,4.0f));
             break;
     }
 }
@@ -63,10 +63,10 @@ float BeatSyncer::get_value() const {
             return _bump_measure;
 
         case TIME_VALUE_BEAT:
-            return Conductor::get_singleton()->measure_to_beats(_bump_measure, 4.0f);
+            return Conductor::measure_to_beats(_bump_measure, 4.0f);
 
         case TIME_VALUE_STEP:
-            return Conductor::get_singleton()->measure_to_steps(_bump_measure, 4.0f, 4.0f);
+            return Conductor::measure_to_steps(_bump_measure, 4.0f, 4.0f);
     }
 }
 
@@ -93,8 +93,8 @@ void BeatSyncer::_set_bump_measure(const float p_value) {
         _notification(NOTIFICATION_READY);
     
     _bump_measure = p_value;
-    _cached_beat = Conductor::get_singleton()->measure_to_beats(_bump_measure, 4.0f);
-    _cached_step = Conductor::get_singleton()->measure_to_steps(_bump_measure, 4.0f, 4.0f);
+    _cached_beat = Conductor::measure_to_beats(_bump_measure, 4.0f);
+    _cached_step = Conductor::measure_to_steps(_bump_measure, 4.0f, 4.0f);
 
     if (_current_time_change.is_null())
         return;
