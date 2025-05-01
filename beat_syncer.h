@@ -17,7 +17,6 @@ public:
 
     bool enabled = true;
     TimeValue type = TIME_VALUE_MEASURE;
-    float value;
 
     void set_enabled(const bool p_enabled);
     bool get_enabled() const;
@@ -26,14 +25,14 @@ public:
     TimeValue get_type() const;
 
     void set_value(const float p_value);
-    bool get_value() const;
+    float get_value() const;
 
 protected:
     void _notification(int p_notification);
     static void _bind_methods();
 
 private:
-    Ref<TimeChange> _current_bpm;
+    Ref<TimeChange> _current_time_change;
         
     int _bump_step = 4; // This is DIFFERENT from TimeValue.Step!!!
     int _step_offset = 0;
@@ -45,7 +44,7 @@ private:
     bool _initialized = false;
 
     void _step_hit(const int p_step);
-    void _bpm_changed(const Ref<TimeChange> p_current_bpm);
+    void _time_change_reached(const Ref<TimeChange> p_current_time_change);
     void _set_bump_measure(const float p_value);
 };
 

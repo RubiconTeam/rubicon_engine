@@ -20,15 +20,24 @@ BeatSyncer::TimeValue BeatSyncer::get_type() const {
 
 void BeatSyncer::_notification(int p_notification) {
     switch(p_notification) {
-        case NOTIFICATION_READY:
+        case NOTIFICATION_READY: {
+            if (_initialized)
+                return;
+
             _initialized = true;
 
             Conductor* conductor = Conductor::get_singleton();
 
-            conductor->connect(SNAME("step_hit"), Callable(this, "_step_hit"));
-            conductor->connect(SNAME("bpm_changed"), Callable(this, "_bpm_changed"));
+            conductor->connect(SNAME("step_hit"), callable_mp(this, &BeatSyncer::_step_hit));
+            conductor->connect(SNAME("time_change_reached"), callable_mp(this, &BeatSyncer::_time_change_reached));
 
-            _bpm_changed(conductor->get_time_changes()[conductor->get_time_change_index()]);
+            _time_change_reached(conductor->get_current_time_change());
+        }   break;
+        case NOTIFICATION_PREDELETE: {
+            Conductor* conductor = Conductor::get_singleton();
+            conductor->disconnect(SNAME("step_hit"), callable_mp(this, &BeatSyncer::_step_hit));
+            conductor->disconnect(SNAME("time_change_reached"), callable_mp(this, &BeatSyncer::_time_change_reached));
+        }   break;
     }
 }
 
@@ -48,35 +57,49 @@ void BeatSyncer::set_value(const float p_value) {
     }
 }
 
-bool BeatSyncer::get_value() const {
-    return value;
+float BeatSyncer::get_value() const {
+    switch(BeatSyncer::get_type()) {
+        default:
+            return _bump_measure;
+
+        case TIME_VALUE_BEAT:
+            return Conductor::get_singleton()->measure_to_beats(_bump_measure, 4.0f);
+
+        case TIME_VALUE_STEP:
+            return Conductor::get_singleton()->measure_to_steps(_bump_measure, 4.0f, 4.0f);
+    }
 }
 
 void BeatSyncer::_step_hit(const int p_step) {
     if (!enabled)
         return;
 
-    if ((p_step - _step_offset) % _bump_step == 0){
+    if ((p_step - _step_offset) % _bump_step == 0)
         emit_signal("bumped");
-    }
 }
 
-void BeatSyncer::_bpm_changed(const Ref<TimeChange> p_current_bpm) {
-    _step_offset += _current_bpm.is_null() ? 0 : Math::floor((p_current_bpm->time - p_current_bpm->time) * p_current_bpm->time_signature_numerator * p_current_bpm->time_signature_denominator);
+void BeatSyncer::_time_change_reached(const Ref<TimeChange> p_current_time_change) {
+    if (p_current_time_change.is_null())
+        return;
+    
+    _step_offset += _current_time_change.is_null() ? 0 : int(Math::floor((p_current_time_change->time - _current_time_change->time) * _current_time_change->time_signature_numerator * _current_time_change->time_signature_denominator));
 
-    _current_bpm = p_current_bpm;
+    _current_time_change = p_current_time_change;
     _set_bump_measure(_bump_measure);
 }
 
 void BeatSyncer::_set_bump_measure(const float p_value) {
     if (!_initialized)
-        _notification(13);
+        _notification(NOTIFICATION_READY);
     
     _bump_measure = p_value;
     _cached_beat = Conductor::get_singleton()->measure_to_beats(_bump_measure, 4.0f);
     _cached_step = Conductor::get_singleton()->measure_to_steps(_bump_measure, 4.0f, 4.0f);
 
-    _bump_step = Math::floor(_current_bpm->time_signature_numerator * _current_bpm->time_signature_denominator * _bump_measure);
+    if (_current_time_change.is_null())
+        return;
+    
+    _bump_step = int(Math::floor(_current_time_change->time_signature_numerator * _current_time_change->time_signature_denominator * _bump_measure));
 }
 
 void BeatSyncer::_bind_methods() {
@@ -92,9 +115,8 @@ void BeatSyncer::_bind_methods() {
     ClassDB::bind_method("get_value", &BeatSyncer::get_value);
     
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "enabled"), "set_enabled", "get_enabled");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "type", PROPERTY_HINT_ENUM, "Measure,Beat,Step"), "set_type", "get_type");
     ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "value"), "set_value", "get_value");
 
     ADD_SIGNAL(MethodInfo("bumped"));
-
-    
 }
