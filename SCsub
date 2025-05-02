@@ -6,7 +6,11 @@ Import("env_modules")
 
 env_rubicon = env_modules.Clone()
 
+# Rubicom
 env_rubicon.add_source_files(env.modules_sources, "*.cpp")
+
+# Rubicon.Data
+env_rubicon.add_source_files(env.modules_sources, "data/*.cpp")
 
 # Add more like this here for more namespaces n stuff
 # env_rubicon.add_source_files(env.modules_sources, "./environment/*.cpp")

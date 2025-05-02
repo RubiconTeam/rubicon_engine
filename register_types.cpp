@@ -6,9 +6,11 @@ void initialize_rubicon_module(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE)
 		return;
 
-	// Register classes
-	
+	// Rubicon
 	GDREGISTER_CLASS(BeatSyncer);
+
+	// Rubicon.Data
+	GDREGISTER_CLASS(BeatSyncerData);
 }
 
 void uninitialize_rubicon_module(ModuleInitializationLevel p_level) {

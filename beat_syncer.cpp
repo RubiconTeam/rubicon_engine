@@ -10,12 +10,17 @@ bool BeatSyncer::get_enabled() const {
     return enabled;
 }
 
-void BeatSyncer::set_type(const TimeValue p_type) {
-    type = p_type;
+void BeatSyncer::set_data(const Ref<BeatSyncerData> p_data) {
+    if (!_data.is_null())
+        _data->disconnect(SNAME("value_changed"), callable_mp(this, &BeatSyncer::_update_values));
+
+    _data = p_data;
+    _data->connect(SNAME("value_changed"), callable_mp(this, &BeatSyncer::_update_values));
+    _update_values();
 }
 
-BeatSyncer::TimeValue BeatSyncer::get_type() const {
-    return type;
+Ref<BeatSyncerData> BeatSyncer::get_data() const {
+    return _data;
 }
 
 void BeatSyncer::_notification(int p_notification) {
@@ -27,7 +32,6 @@ void BeatSyncer::_notification(int p_notification) {
             _initialized = true;
 
             Conductor* conductor = Conductor::get_singleton();
-
             conductor->connect(SNAME("step_hit"), callable_mp(this, &BeatSyncer::_step_hit));
             conductor->connect(SNAME("time_change_reached"), callable_mp(this, &BeatSyncer::_time_change_reached));
 
@@ -38,35 +42,6 @@ void BeatSyncer::_notification(int p_notification) {
             conductor->disconnect(SNAME("step_hit"), callable_mp(this, &BeatSyncer::_step_hit));
             conductor->disconnect(SNAME("time_change_reached"), callable_mp(this, &BeatSyncer::_time_change_reached));
         }   break;
-    }
-}
-
-void BeatSyncer::set_value(const float p_value) {
-    switch(BeatSyncer::get_type()) {
-        default:
-            _set_bump_measure(p_value);
-            break;
-
-        case TIME_VALUE_BEAT:
-            _set_bump_measure(Conductor::beats_to_measures(p_value,4.0f));
-            break;
-
-        case TIME_VALUE_STEP:
-            _set_bump_measure(Conductor::steps_to_measures(p_value,4.0f,4.0f));
-            break;
-    }
-}
-
-float BeatSyncer::get_value() const {
-    switch(BeatSyncer::get_type()) {
-        default:
-            return _bump_measure;
-
-        case TIME_VALUE_BEAT:
-            return Conductor::measure_to_beats(_bump_measure, 4.0f);
-
-        case TIME_VALUE_STEP:
-            return Conductor::measure_to_steps(_bump_measure, 4.0f, 4.0f);
     }
 }
 
@@ -85,38 +60,27 @@ void BeatSyncer::_time_change_reached(const Ref<TimeChange> p_current_time_chang
     _step_offset += _current_time_change.is_null() ? 0 : int(Math::floor((p_current_time_change->time - _current_time_change->time) * _current_time_change->time_signature_numerator * _current_time_change->time_signature_denominator));
 
     _current_time_change = p_current_time_change;
-    _set_bump_measure(_bump_measure);
+    _update_values();
 }
 
-void BeatSyncer::_set_bump_measure(const float p_value) {
+void BeatSyncer::_update_values() {
     if (!_initialized)
         _notification(NOTIFICATION_READY);
     
-    _bump_measure = p_value;
-    _cached_beat = Conductor::measure_to_beats(_bump_measure, 4.0f);
-    _cached_step = Conductor::measure_to_steps(_bump_measure, 4.0f, 4.0f);
-
-    if (_current_time_change.is_null())
+    if (_data.is_null() || _current_time_change.is_null())
         return;
     
-    _bump_step = int(Math::floor(_current_time_change->time_signature_numerator * _current_time_change->time_signature_denominator * _bump_measure));
+    _bump_step = int(Math::floor(_current_time_change->time_signature_numerator * _current_time_change->time_signature_denominator * _data->get_value_as_measure()));
 }
 
 void BeatSyncer::_bind_methods() {
-    BIND_ENUM_CONSTANT(TIME_VALUE_MEASURE);
-    BIND_ENUM_CONSTANT(TIME_VALUE_BEAT);
-    BIND_ENUM_CONSTANT(TIME_VALUE_STEP);
-
     ClassDB::bind_method(D_METHOD("set_enabled", "enabled"), &BeatSyncer::set_enabled);
     ClassDB::bind_method("get_enabled", &BeatSyncer::get_enabled);
-    ClassDB::bind_method(D_METHOD("set_type", "type"), &BeatSyncer::set_type);
-    ClassDB::bind_method("get_type", &BeatSyncer::get_type);
-    ClassDB::bind_method(D_METHOD("set_value", "value"), &BeatSyncer::set_value);
-    ClassDB::bind_method("get_value", &BeatSyncer::get_value);
-    
+    ClassDB::bind_method(D_METHOD("set_data", "data"), &BeatSyncer::set_data);
+    ClassDB::bind_method("get_data", &BeatSyncer::get_data);
+
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "enabled"), "set_enabled", "get_enabled");
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "type", PROPERTY_HINT_ENUM, "Measure,Beat,Step"), "set_type", "get_type");
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "value"), "set_value", "get_value");
+    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "data", PROPERTY_HINT_RESOURCE_TYPE, "BeatSyncerData"), "set_data", "get_data");
 
     ADD_SIGNAL(MethodInfo("bumped"));
 }

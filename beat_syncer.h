@@ -2,6 +2,7 @@
 #define BEAT_SYNCER_H
 
 #include "scene/main/node.h"
+#include "data/beat_syncer_data.h"
 #include "modules/rubicon_core/chart/time_change.h"
 #include "core/object/class_db.h"
 
@@ -9,23 +10,13 @@ class BeatSyncer : public Node {
     GDCLASS(BeatSyncer, Node);
 
 public:
-    enum TimeValue {
-        TIME_VALUE_MEASURE,
-        TIME_VALUE_BEAT,
-        TIME_VALUE_STEP,
-    };
-
     bool enabled = true;
-    TimeValue type = TIME_VALUE_MEASURE;
 
     void set_enabled(const bool p_enabled);
     bool get_enabled() const;
 
-    void set_type(const TimeValue p_type);
-    TimeValue get_type() const;
-
-    void set_value(const float p_value);
-    float get_value() const;
+    void set_data(const Ref<BeatSyncerData> p_data);
+    Ref<BeatSyncerData> get_data() const;
 
 protected:
     void _notification(int p_notification);
@@ -33,21 +24,16 @@ protected:
 
 private:
     Ref<TimeChange> _current_time_change;
+    Ref<BeatSyncerData> _data;
         
     int _bump_step = 4; // This is DIFFERENT from TimeValue.Step!!!
     int _step_offset = 0;
-
-    float _cached_step = 0.0f;
-    float _cached_beat = 0.0f;
-    float _bump_measure = 0.5f;
 
     bool _initialized = false;
 
     void _step_hit(const int p_step);
     void _time_change_reached(const Ref<TimeChange> p_current_time_change);
-    void _set_bump_measure(const float p_value);
+    void _update_values();
 };
-
-VARIANT_ENUM_CAST(BeatSyncer::TimeValue);
 
 #endif // BEAT_SYNCER_H
