@@ -15,6 +15,9 @@ void BeatSyncer::set_data(const Ref<BeatSyncerData> p_data) {
         _data->disconnect(SNAME("value_changed"), callable_mp(this, &BeatSyncer::_update_values));
 
     _data = p_data;
+    if (_data.is_null())
+        return;
+
     _data->connect(SNAME("value_changed"), callable_mp(this, &BeatSyncer::_update_values));
     _update_values();
 }

@@ -15,8 +15,8 @@ void initialize_rubicon_module(ModuleInitializationLevel p_level) {
 
 	// Rubicon.Environment
 	GDREGISTER_CLASS(RubiconDancerController);
-	GDREGISTER_CLASS(RubiconDancer2D);
-	GDREGISTER_CLASS(RubiconDancer3D);
+	//GDREGISTER_CLASS(RubiconDancer2D);
+	//GDREGISTER_CLASS(RubiconDancer3D);
 
 	// Rubicon.Data
 	GDREGISTER_CLASS(BeatSyncerData);

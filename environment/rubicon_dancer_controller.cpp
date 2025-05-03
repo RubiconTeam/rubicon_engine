@@ -40,20 +40,48 @@ Ref<RubiconDancerData> RubiconDancerController::get_dancer_data() const {
     return dancer_data;
 }
 
-void RubiconDancerController::set_animation_player(AnimationPlayer *p_animation_player) {
-    animation_player = p_animation_player;
+void RubiconDancerController::set_reference_animation_player(const AnimationPlayer *p_animation_player) {
+    ERR_MAIN_THREAD_GUARD;
+	if (p_animation_player != nullptr) {
+		animation_player = p_animation_player->get_instance_id();
+	} else {
+		animation_player = ObjectID();
+	}
 }
 
-AnimationPlayer* RubiconDancerController::get_animation_player() {
-    return animation_player;
+AnimationPlayer* RubiconDancerController::get_reference_animation_player() const {
+    ERR_READ_THREAD_GUARD_V(nullptr);
+	Object *ctx_obj = ObjectDB::get_instance(animation_player);
+	AnimationPlayer *ctx_player = Object::cast_to<AnimationPlayer>(ctx_obj);
+
+	return ctx_player;
 }
 
-void RubiconDancerController::set_beat_syncer(Ref<BeatSyncer> p_beat_syncer) {
-    beat_syncer = p_beat_syncer;
+void RubiconDancerController::set_internal_beat_syncer(BeatSyncer *p_beat_syncer) {
+    ERR_MAIN_THREAD_GUARD;
+	if (p_beat_syncer != nullptr) {
+        if (!beat_syncer.is_null()) {
+            BeatSyncer* old_beat_syncer = get_internal_beat_syncer();
+            old_beat_syncer->disconnect(SNAME("bumped"), callable_mp(this, &RubiconDancerController::_try_dance));
+        }
+
+		beat_syncer = p_beat_syncer->get_instance_id();
+        p_beat_syncer->connect(SNAME("bumped"), callable_mp(this, &RubiconDancerController::_try_dance));
+	} else {
+		beat_syncer = ObjectID();
+	}
 }
 
-Ref<BeatSyncer> RubiconDancerController::get_beat_syncer() {
-    return beat_syncer;
+BeatSyncer* RubiconDancerController::get_internal_beat_syncer() const {
+    ERR_READ_THREAD_GUARD_V(nullptr);
+	Object *ctx_obj = ObjectDB::get_instance(beat_syncer);
+	BeatSyncer *ctx_syncer = Object::cast_to<BeatSyncer>(ctx_obj);
+
+	return ctx_syncer;
+}
+
+void RubiconDancerController::_try_dance() {
+    // TODO: do this
 }
 
 void RubiconDancerController::_bind_methods() {
@@ -72,17 +100,21 @@ void RubiconDancerController::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_dancer_data", "dancer_data"), &RubiconDancerController::set_dancer_data);
     ClassDB::bind_method("get_dancer_data", &RubiconDancerController::get_dancer_data);
 
-    ClassDB::bind_method(D_METHOD("set_animation_player", "animation_player"), &RubiconDancerController::set_animation_player);
-    ClassDB::bind_method("get_animation_player", &RubiconDancerController::get_animation_player);
+    ClassDB::bind_method(D_METHOD("set_reference_animation_player", "animation_player"), &RubiconDancerController::set_reference_animation_player);
+    ClassDB::bind_method("get_reference_animation_player", &RubiconDancerController::get_reference_animation_player);
 
-    ClassDB::bind_method(D_METHOD("set_beat_syncer", "beat_syncer"), &RubiconDancerController::set_beat_syncer);
-    ClassDB::bind_method("get_beat_syncer", &RubiconDancerController::get_beat_syncer);*/
+    ClassDB::bind_method(D_METHOD("set_internal_beat_syncer", "beat_syncer"), &RubiconDancerController::set_internal_beat_syncer);
+    ClassDB::bind_method("get_internal_beat_syncer", &RubiconDancerController::get_internal_beat_syncer);
 
     ADD_PROPERTY(PropertyInfo(Variant::STRING, "global_prefix"), "set_global_prefix", "get_global_prefix");
     ADD_PROPERTY(PropertyInfo(Variant::STRING, "global_suffix"), "set_global_suffix", "get_global_suffix");
     ADD_PROPERTY(PropertyInfo(Variant::INT, "dance_index"), "set_dance_index", "get_dance_index");
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "freeze_dancing"), "set_freeze_dancing", "get_freeze_dancing");
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "dancer_data", PROPERTY_HINT_RESOURCE_TYPE, "RubiconDancerData"), "set_dancer_data", "get_dancer_data");
-    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "animation_player", PROPERTY_HINT_NODE_TYPE, "AnimationPlayer"), "set_animation_player", "get_animation_player");
-    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "beat_syncer", PROPERTY_HINT_NODE_TYPE, "BeatSyncer"), "set_beat_syncer", "get_beat_syncer");
+
+    ADD_GROUP("References", "reference_");
+    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "reference_animation_player", PROPERTY_HINT_NODE_TYPE, "AnimationPlayer"), "set_reference_animation_player", "get_reference_animation_player");
+
+    ADD_GROUP("Internals", "internal_");
+    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "internal_beat_syncer", PROPERTY_HINT_NODE_TYPE, "BeatSyncer"), "set_internal_beat_syncer", "get_internal_beat_syncer");
 }
