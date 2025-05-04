@@ -42,8 +42,12 @@ public:
     void set_internal_beat_syncer(BeatSyncer *p_beat_syncer);
     BeatSyncer* get_internal_beat_syncer() const;
 
+    void dance(const String &p_custom_prefix = "", const String &p_custom = "");
+
 protected:
     static void _bind_methods();
+    
+    void _notification(int p_notification);
 
     void _try_dance();
 };
