@@ -18,8 +18,8 @@ public:
 
     // no idea if these should be references but just in case
     Ref<RubiconDancerData> dancer_data;
-    ObjectID animation_player;
-    ObjectID beat_syncer;
+    AnimationPlayer* reference_animation_player;
+    AnimationPlayer* internal_beat_syncer;
 
     void set_global_prefix(const String p_global_prefix);
     String get_global_prefix() const;
@@ -36,7 +36,7 @@ public:
     void set_dancer_data(const Ref<RubiconDancerData> p_dancer_data);
     Ref<RubiconDancerData> get_dancer_data() const;
 
-    void set_reference_animation_player(const AnimationPlayer *p_animation_player);
+    void set_reference_animation_player(AnimationPlayer *p_animation_player);
     AnimationPlayer* get_reference_animation_player() const;
     
     void set_internal_beat_syncer(BeatSyncer *p_beat_syncer);

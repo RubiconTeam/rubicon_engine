@@ -117,42 +117,23 @@ Ref<RubiconDancerData> RubiconDancerController::get_dancer_data() const {
     return dancer_data;
 }
 
-void RubiconDancerController::set_reference_animation_player(const AnimationPlayer *p_animation_player) {
-    ERR_MAIN_THREAD_GUARD;
-	if (p_animation_player != nullptr) {
-		animation_player = p_animation_player->get_instance_id();
-	} else {
-		animation_player = ObjectID();
-	}
+void RubiconDancerController::set_reference_animation_player(AnimationPlayer *p_animation_player) {
+    reference_animation_player = p_animation_player;
 }
 
 AnimationPlayer* RubiconDancerController::get_reference_animation_player() const {
-    ERR_READ_THREAD_GUARD_V(nullptr);
-	Object *ctx_obj = ObjectDB::get_instance(animation_player);
-	AnimationPlayer *ctx_player = Object::cast_to<AnimationPlayer>(ctx_obj);
-
-	return ctx_player;
+    return reference_animation_player;
 }
 
 void RubiconDancerController::set_internal_beat_syncer(BeatSyncer *p_beat_syncer) {
-    ERR_MAIN_THREAD_GUARD;
-	if (p_beat_syncer != nullptr) {
-        if (!beat_syncer.is_null()) {
-            BeatSyncer* old_beat_syncer = get_internal_beat_syncer();
-            old_beat_syncer->disconnect(SNAME("bumped"), callable_mp(this, &RubiconDancerController::_try_dance));
-        }
+    if (!beat_syncer.is_null()) {
+        internal_beat_syncer->disconnect(SNAME("bumped"), callable_mp(this, &RubiconDancerController::_try_dance));
+    }
 
-		beat_syncer = p_beat_syncer->get_instance_id();
-        p_beat_syncer->connect(SNAME("bumped"), callable_mp(this, &RubiconDancerController::_try_dance));
-	} else {
-		beat_syncer = ObjectID();
-	}
+    internal_beat_syncer = p_beat_syncer;
+    p_beat_syncer->connect(SNAME("bumped"), callable_mp(this, &RubiconDancerController::_try_dance));
 }
 
 BeatSyncer* RubiconDancerController::get_internal_beat_syncer() const {
-    ERR_READ_THREAD_GUARD_V(nullptr);
-	Object *ctx_obj = ObjectDB::get_instance(beat_syncer);
-	BeatSyncer *ctx_syncer = Object::cast_to<BeatSyncer>(ctx_obj);
-
-	return ctx_syncer;
+	return internal_beat_syncer;
 }
