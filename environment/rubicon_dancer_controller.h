@@ -3,8 +3,8 @@
 
 #include "scene/main/node.h"
 #include "scene/animation/animation_player.h"
-#include "modules/rubicon/data/rubicon_dancer_data.h"
-#include "modules/rubicon/beat_syncer.h"
+#include "../data/rubicon_dancer_data.h"
+#include "../beat_syncer.h"
 #include "core/object/class_db.h"
 
 class RubiconDancerController : public Node {
@@ -19,7 +19,7 @@ public:
     // no idea if these should be references but just in case
     Ref<RubiconDancerData> dancer_data;
     AnimationPlayer* reference_animation_player;
-    AnimationPlayer* internal_beat_syncer;
+    BeatSyncer* internal_beat_syncer;
 
     void set_global_prefix(const String p_global_prefix);
     String get_global_prefix() const;

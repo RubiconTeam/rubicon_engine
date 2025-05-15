@@ -126,7 +126,7 @@ AnimationPlayer* RubiconDancerController::get_reference_animation_player() const
 }
 
 void RubiconDancerController::set_internal_beat_syncer(BeatSyncer *p_beat_syncer) {
-    if (!beat_syncer.is_null()) {
+    if (internal_beat_syncer != nullptr) {
         internal_beat_syncer->disconnect(SNAME("bumped"), callable_mp(this, &RubiconDancerController::_try_dance));
     }
 
