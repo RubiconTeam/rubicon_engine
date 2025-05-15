@@ -1,3 +1,3 @@
 # Rubicon Engine
 
-A Godot Engine module that handles characters, stages, and animations.
+A Godot Engine module that handles characters, maps, and animations.
