@@ -18,8 +18,8 @@ public:
 
     // no idea if these should be references but just in case
     Ref<RubiconDancerData> dancer_data;
-    AnimationPlayer* reference_animation_player;
-    BeatSyncer* internal_beat_syncer;
+    AnimationPlayer* reference_animation_player = nullptr;
+    BeatSyncer* internal_beat_syncer = nullptr;
 
     void set_global_prefix(const String p_global_prefix);
     String get_global_prefix() const;

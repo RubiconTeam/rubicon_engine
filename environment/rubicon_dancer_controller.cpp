@@ -38,7 +38,7 @@ void RubiconDancerController::_try_dance() {
     bool is_current_anim_dance = anim_player->is_playing() && anim_player->get_current_animation().contains(dancer_data->dance_list[dance_index]);
     bool is_current_dance_done = !is_current_anim_dance || anim_player->get_current_animation_position() >= anim_player->get_current_animation_length();
 
-    if((dancer_data->force_dancing || !dancer_data->force_dancing && is_current_dance_done) && !freeze_dancing)
+    if((dancer_data->force_dancing || (!dancer_data->force_dancing && is_current_dance_done)) && !freeze_dancing)
         dance();
 }
 
