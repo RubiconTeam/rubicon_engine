@@ -2,6 +2,7 @@
 #include "core/object/class_db.h"
 #include "rubicon_beat_syncer.h"
 #include "data/rubicon_dancer_data.h"
+#include "data/rubicon_character_icon_data.h"
 #include "environment/rubicon_dancer_controller.h"
 #include "environment/rubicon_dancer_2d.h"
 #include "environment/rubicon_dancer_3d.h"
@@ -21,6 +22,7 @@ void initialize_rubicon_engine_module(ModuleInitializationLevel p_level) {
 	// Rubicon.Data
 	GDREGISTER_CLASS(RubiconBeatSyncerData);
 	GDREGISTER_CLASS(RubiconDancerData);
+	GDREGISTER_CLASS(RubiconCharacterIconData);
 }
 
 void uninitialize_rubicon_engine_module(ModuleInitializationLevel p_level) {
