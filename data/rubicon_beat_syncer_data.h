@@ -1,10 +1,10 @@
-#ifndef BEAT_SYNCER_DATA_H
-#define BEAT_SYNCER_DATA_H
+#ifndef RUBICON_BEAT_SYNCER_DATA_H
+#define RUBICON_BEAT_SYNCER_DATA_H
 
 #include "core/io/resource.h"
 
-class BeatSyncerData : public Resource {
-    GDCLASS(BeatSyncerData, Resource);
+class RubiconBeatSyncerData : public Resource {
+    GDCLASS(RubiconBeatSyncerData, Resource);
 
 public:
     enum TimeValue {
@@ -34,6 +34,6 @@ private:
     void _set_bump_measure(const float p_value);
 };
 
-VARIANT_ENUM_CAST(BeatSyncerData::TimeValue);
+VARIANT_ENUM_CAST(RubiconBeatSyncerData::TimeValue);
 
 #endif

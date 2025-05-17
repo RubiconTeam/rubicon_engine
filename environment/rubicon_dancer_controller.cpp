@@ -3,9 +3,9 @@
 void RubiconDancerController::_notification(int p_notification) {
     switch(p_notification) {
         case NOTIFICATION_READY: {
-            BeatSyncer* syncer = get_internal_beat_syncer();
-            syncer = memnew(BeatSyncer);
-            syncer->set_name("BeatSyncer");
+            RubiconBeatSyncer* syncer = get_internal_beat_syncer();
+            syncer = memnew(RubiconBeatSyncer);
+            syncer->set_name("RubiconBeatSyncer");
             syncer->connect("bumped", callable_mp(this, &RubiconDancerController::_try_dance));
             add_child(syncer);
         }   break;
@@ -74,7 +74,7 @@ void RubiconDancerController::_bind_methods() {
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "reference_animation_player", PROPERTY_HINT_NODE_TYPE, "AnimationPlayer"), "set_reference_animation_player", "get_reference_animation_player");
 
     ADD_GROUP("Internals", "internal_");
-    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "internal_beat_syncer", PROPERTY_HINT_NODE_TYPE, "BeatSyncer"), "set_internal_beat_syncer", "get_internal_beat_syncer");
+    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "internal_beat_syncer", PROPERTY_HINT_NODE_TYPE, "RubiconBeatSyncer"), "set_internal_beat_syncer", "get_internal_beat_syncer");
 }
 
 void RubiconDancerController::set_global_prefix(const String p_global_prefix) {
@@ -125,7 +125,7 @@ AnimationPlayer* RubiconDancerController::get_reference_animation_player() const
     return reference_animation_player;
 }
 
-void RubiconDancerController::set_internal_beat_syncer(BeatSyncer *p_beat_syncer) {
+void RubiconDancerController::set_internal_beat_syncer(RubiconBeatSyncer *p_beat_syncer) {
     if (internal_beat_syncer != nullptr) {
         internal_beat_syncer->disconnect(SNAME("bumped"), callable_mp(this, &RubiconDancerController::_try_dance));
     }
@@ -134,6 +134,6 @@ void RubiconDancerController::set_internal_beat_syncer(BeatSyncer *p_beat_syncer
     p_beat_syncer->connect(SNAME("bumped"), callable_mp(this, &RubiconDancerController::_try_dance));
 }
 
-BeatSyncer* RubiconDancerController::get_internal_beat_syncer() const {
+RubiconBeatSyncer* RubiconDancerController::get_internal_beat_syncer() const {
 	return internal_beat_syncer;
 }

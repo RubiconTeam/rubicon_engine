@@ -1,13 +1,13 @@
 #include "rubicon_dancer_data.h"
-#include "beat_syncer_data.h"
+#include "rubicon_beat_syncer_data.h"
 
-void RubiconDancerData::set_beat_data(const Ref<BeatSyncerData> p_data) {
+void RubiconDancerData::set_beat_data(const Ref<RubiconBeatSyncerData> p_data) {
     beat_data = p_data;
 
     emit_signal(SNAME("beat_data_changed"));
 }
 
-Ref<BeatSyncerData> RubiconDancerData::get_beat_data() const {
+Ref<RubiconBeatSyncerData> RubiconDancerData::get_beat_data() const {
     return beat_data;
 }
 
@@ -48,7 +48,7 @@ void RubiconDancerData::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_reset_animation_progress", "reset_animation_progress"), &RubiconDancerData::set_reset_animation_progress);
     ClassDB::bind_method("get_reset_animation_progress", &RubiconDancerData::get_reset_animation_progress);
 
-    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "beat_data", PROPERTY_HINT_RESOURCE_TYPE, "BeatSyncerData"), "set_beat_data", "get_beat_data");
+    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "beat_data", PROPERTY_HINT_RESOURCE_TYPE, "RubiconBeatSyncerData"), "set_beat_data", "get_beat_data");
     ADD_PROPERTY(PropertyInfo(Variant::PACKED_STRING_ARRAY, "dance_list"), "set_dance_list", "get_dance_list");
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "force_dancing"), "set_force_dancing", "get_force_dancing");
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "reset_animation_progress"), "set_reset_animation_progress", "get_reset_animation_progress");

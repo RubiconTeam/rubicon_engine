@@ -1,6 +1,6 @@
 #include "register_types.h"
 #include "core/object/class_db.h"
-#include "beat_syncer.h"
+#include "rubicon_beat_syncer.h"
 #include "data/rubicon_dancer_data.h"
 #include "environment/rubicon_dancer_controller.h"
 #include "environment/rubicon_dancer_2d.h"
@@ -11,7 +11,7 @@ void initialize_rubicon_engine_module(ModuleInitializationLevel p_level) {
 		return;
 
 	// Rubicon
-	GDREGISTER_CLASS(BeatSyncer);
+	GDREGISTER_CLASS(RubiconBeatSyncer);
 
 	// Rubicon.Environment
 	GDREGISTER_CLASS(RubiconDancerController);
@@ -19,7 +19,7 @@ void initialize_rubicon_engine_module(ModuleInitializationLevel p_level) {
 	//GDREGISTER_CLASS(RubiconDancer3D);
 
 	// Rubicon.Data
-	GDREGISTER_CLASS(BeatSyncerData);
+	GDREGISTER_CLASS(RubiconBeatSyncerData);
 	GDREGISTER_CLASS(RubiconDancerData);
 }
 

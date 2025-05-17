@@ -4,7 +4,7 @@
 #include "scene/main/node.h"
 #include "scene/animation/animation_player.h"
 #include "../data/rubicon_dancer_data.h"
-#include "../beat_syncer.h"
+#include "../rubicon_beat_syncer.h"
 #include "core/object/class_db.h"
 
 class RubiconDancerController : public Node {
@@ -19,7 +19,7 @@ public:
     // no idea if these should be references but just in case
     Ref<RubiconDancerData> dancer_data;
     AnimationPlayer* reference_animation_player = nullptr;
-    BeatSyncer* internal_beat_syncer = nullptr;
+    RubiconBeatSyncer* internal_beat_syncer = nullptr;
 
     void set_global_prefix(const String p_global_prefix);
     String get_global_prefix() const;
@@ -39,8 +39,8 @@ public:
     void set_reference_animation_player(AnimationPlayer *p_animation_player);
     AnimationPlayer* get_reference_animation_player() const;
     
-    void set_internal_beat_syncer(BeatSyncer *p_beat_syncer);
-    BeatSyncer* get_internal_beat_syncer() const;
+    void set_internal_beat_syncer(RubiconBeatSyncer *p_beat_syncer);
+    RubiconBeatSyncer* get_internal_beat_syncer() const;
 
     void dance(const String &p_custom_prefix = "", const String &p_custom = "");
 

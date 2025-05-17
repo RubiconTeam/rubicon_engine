@@ -2,20 +2,20 @@
 #define RUBICON_DANCER_DATA_H
 
 #include "core/io/resource.h"
-#include "beat_syncer_data.h"
+#include "rubicon_beat_syncer_data.h"
 
 class RubiconDancerData : public Resource {
     GDCLASS(RubiconDancerData, Resource);
 
 public:
-    Ref<BeatSyncerData> beat_data;
+    Ref<RubiconBeatSyncerData> beat_data;
 
     PackedStringArray dance_list = PackedStringArray({"idle"});
     bool force_dancing = true;
     bool reset_animation_progress = true;
 
-    void set_beat_data(const Ref<BeatSyncerData> p_data);
-    Ref<BeatSyncerData> get_beat_data() const;
+    void set_beat_data(const Ref<RubiconBeatSyncerData> p_data);
+    Ref<RubiconBeatSyncerData> get_beat_data() const;
 
     void set_dance_list(const PackedStringArray p_dance_list);
     PackedStringArray get_dance_list() const;
