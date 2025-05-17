@@ -40,6 +40,9 @@ void RubiconBeatSyncer::_notification(int p_notification) {
             _time_change_reached(RubiconConductor::get_singleton()->get_current_time_change());
         }   break;
         case NOTIFICATION_PREDELETE: {
+            if (!_initialized)
+                return;
+
             RubiconConductor::get_singleton()->disconnect(SNAME("step_hit"), callable_mp(this, &RubiconBeatSyncer::_step_hit));
             RubiconConductor::get_singleton()->disconnect(SNAME("time_change_reached"), callable_mp(this, &RubiconBeatSyncer::_time_change_reached));
         }   break;
