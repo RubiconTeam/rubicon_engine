@@ -6,6 +6,11 @@
 #include "../data/rubicon_dancer_data.h"
 #include "../rubicon_beat_syncer.h"
 #include "core/object/class_db.h"
+#include "core/object/gdvirtual.gen.inc"
+#include "core/variant/typed_array.h"
+
+template <typename T>
+class TypedArray;
 
 class RubiconDancerController : public Node {
     GDCLASS(RubiconDancerController, Node);
@@ -16,10 +21,7 @@ public:
     int dance_index = 0;
     bool freeze_dancing = false;
 
-    // no idea if these should be references but just in case
     Ref<RubiconDancerData> dancer_data;
-    AnimationPlayer* reference_animation_player = nullptr;
-    RubiconBeatSyncer* internal_beat_syncer = nullptr;
 
     void set_global_prefix(const String p_global_prefix);
     String get_global_prefix() const;
@@ -36,20 +38,29 @@ public:
     void set_dancer_data(const Ref<RubiconDancerData> p_dancer_data);
     Ref<RubiconDancerData> get_dancer_data() const;
 
-    void set_reference_animation_player(AnimationPlayer *p_animation_player);
-    AnimationPlayer* get_reference_animation_player() const;
-    
-    void set_internal_beat_syncer(RubiconBeatSyncer *p_beat_syncer);
-    RubiconBeatSyncer* get_internal_beat_syncer() const;
+    void set_internal_dance_behavior(const bool p_enabled);
+    bool is_internally_dancing() const;
 
-    void dance(const String &p_custom_prefix = "", const String &p_custom = "");
+    AnimationPlayer* get_animation_player() const;
+    RubiconBeatSyncer* get_beat_syncer() const;
+
+    void dance(const String &p_custom_prefix = "", const String &p_custom_suffix = "");
+
+    PackedStringArray get_configuration_warnings() const override;
 
 protected:
-    static void _bind_methods();
-    
     void _notification(int p_notification);
-
     void _try_dance();
+
+    static void _bind_methods();
+
+    GDVIRTUAL2(_dance, String, String);
+
+private:
+    AnimationPlayer* _animation_player = nullptr;
+    RubiconBeatSyncer* _beat_syncer = nullptr;
+
+    bool _internal_dance_enabled = true;
 };
 
 #endif

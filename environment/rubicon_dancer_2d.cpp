@@ -1,40 +1,46 @@
 #include "rubicon_dancer_2d.h"
 
-void RubiconDancer2D::set_dancer_data(const Ref<RubiconDancerData> p_dancer_data) {
-    dancer_data = p_dancer_data;
+void RubiconDancer2D::set_reference_visual(Node2D* p_visual) {
+    reference_visual = p_visual;
 }
 
-Ref<RubiconDancerData> RubiconDancer2D::get_dancer_data() const {
-    return dancer_data;
+Node2D* RubiconDancer2D::get_reference_visual() const {
+    return reference_visual;
 }
 
-void RubiconDancer2D::set_dancer_controller(const Ref<RubiconDancerController> p_dancer_controller) {
-    dancer_controller = p_dancer_controller;
+RubiconDancerController* RubiconDancer2D::get_dancer_controller() const {
+    return _dancer_controller;
 }
 
-Ref<RubiconDancerController> RubiconDancer2D::get_dancer_controller() const {
-    return dancer_controller;
+PackedStringArray RubiconDancer2D::get_configuration_warnings() const {
+    PackedStringArray warnings = Node2D::get_configuration_warnings();
+
+    if (_dancer_controller == nullptr)
+        warnings.push_back(RTR("This node has no controller, so it won't have any functionality beyond a regular Node2D.\nConsider adding a node that at least inherits RubiconDancerController."));
+    
+    return warnings;
 }
 
-void RubiconDancer2D::set_sprite(const Ref<Node2D> p_sprite) {
-    sprite = p_sprite;
-}
+void RubiconDancer2D::_notification(int p_what) {
+    switch (p_what) {
+        case NOTIFICATION_CHILD_ORDER_CHANGED: {
+            for (int i = 0; i < get_child_count(); i++) {
+                Node* child = get_child(i);
 
-Ref<Node2D> RubiconDancer2D::get_sprite() const {
-    return sprite;
+                _dancer_controller = Object::cast_to<RubiconDancerController>(child);
+                if (_dancer_controller)
+                    break;
+            }
+        } break;
+    }
 }
 
 void RubiconDancer2D::_bind_methods() {
-    ClassDB::bind_method(D_METHOD("set_dancer_data", "dancer_data"), &RubiconDancer2D::set_dancer_data);
-    ClassDB::bind_method("get_dancer_data", &RubiconDancer2D::get_dancer_data);
+    ClassDB::bind_method(D_METHOD("set_reference_visual", "visual"), &RubiconDancer2D::set_reference_visual);
+    ClassDB::bind_method("get_reference_visual", &RubiconDancer2D::get_reference_visual);
     
-    ClassDB::bind_method(D_METHOD("set_dancer_controller", "dancer_controller"), &RubiconDancer2D::set_dancer_controller);
+    ADD_GROUP("References", "reference_");
+    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "reference_visual", PROPERTY_HINT_NODE_TYPE, "Node2D"), "set_reference_visual", "get_reference_visual");
+
     ClassDB::bind_method("get_dancer_controller", &RubiconDancer2D::get_dancer_controller);
-    
-    ClassDB::bind_method(D_METHOD("set_sprite", "sprite"), &RubiconDancer2D::set_sprite);
-    ClassDB::bind_method("get_sprite", &RubiconDancer2D::get_sprite);
-    
-    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "dancer_data", PROPERTY_HINT_RESOURCE_TYPE, "RubiconDancerData"), "set_dancer_data", "get_dancer_data");
-    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "dancer_controller", PROPERTY_HINT_NODE_TYPE, "RubiconDancerController"), "set_dancer_controller", "get_dancer_controller");
-    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "sprite", PROPERTY_HINT_NODE_TYPE, "Node2D"), "set_sprite", "get_sprite");
 }

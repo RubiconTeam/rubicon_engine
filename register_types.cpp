@@ -14,15 +14,15 @@ void initialize_rubicon_engine_module(ModuleInitializationLevel p_level) {
 	// Rubicon
 	GDREGISTER_CLASS(RubiconBeatSyncer);
 
-	// Rubicon.Environment
-	GDREGISTER_CLASS(RubiconDancerController);
-	//GDREGISTER_CLASS(RubiconDancer2D);
-	//GDREGISTER_CLASS(RubiconDancer3D);
-
 	// Rubicon.Data
 	GDREGISTER_CLASS(RubiconBeatSyncerData);
 	GDREGISTER_CLASS(RubiconDancerData);
 	GDREGISTER_CLASS(RubiconCharacterIconData);
+
+	// Rubicon.Environment
+	GDREGISTER_CLASS(RubiconDancerController);
+	GDREGISTER_CLASS(RubiconDancer2D);
+	GDREGISTER_CLASS(RubiconDancer3D);
 }
 
 void uninitialize_rubicon_engine_module(ModuleInitializationLevel p_level) {

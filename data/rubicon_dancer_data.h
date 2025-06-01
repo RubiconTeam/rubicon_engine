@@ -8,14 +8,9 @@ class RubiconDancerData : public Resource {
     GDCLASS(RubiconDancerData, Resource);
 
 public:
-    Ref<RubiconBeatSyncerData> beat_data;
-
     PackedStringArray dance_list = PackedStringArray({"idle"});
     bool force_dancing = true;
     bool reset_animation_progress = true;
-
-    void set_beat_data(const Ref<RubiconBeatSyncerData> p_data);
-    Ref<RubiconBeatSyncerData> get_beat_data() const;
 
     void set_dance_list(const PackedStringArray p_dance_list);
     PackedStringArray get_dance_list() const;

@@ -13,9 +13,8 @@ env_rubicon_engine.add_source_files(env.modules_sources, "*.cpp")
 env_rubicon_engine.add_source_files(env.modules_sources, "data/*.cpp")
 
 # Rubicon.Environment
-# i aint fixin dat shit
-# env_rubicon_engine.add_source_files(env.modules_sources, "environment/*.cpp")
-env_rubicon_engine.add_source_files(env.modules_sources, "environment/rubicon_dancer_controller.cpp")
+env_rubicon_engine.add_source_files(env.modules_sources, "environment/*.cpp")
+# env_rubicon_engine.add_source_files(env.modules_sources, "environment/rubicon_dancer_controller.cpp")
 
 # Add more like this here for more namespaces n stuff
 # env_rubicon_engine.add_source_files(env.modules_sources, "./environment/*.cpp")

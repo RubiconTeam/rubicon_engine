@@ -1,28 +1,30 @@
 #ifndef RUBICON_DANCER_2D_H
 #define RUBICON_DANCER_2D_H
 
+#include "core/object/class_db.h"
 #include "rubicon_dancer_controller.h"
 #include "scene/2d/node_2d.h"
+#include "scene/main/node.h"
 
 class RubiconDancer2D : public Node2D {
     GDCLASS(RubiconDancer2D, Node2D);
 
 public:
-    Ref<RubiconDancerData> dancer_data;
-    Ref<RubiconDancerController> dancer_controller;
-    Ref<Node2D> sprite;
-    
-    void set_dancer_data(const Ref<RubiconDancerData> p_dancer_data);
-    Ref<RubiconDancerData> get_dancer_data() const;
+    Node2D* reference_visual = nullptr;
 
-    void set_dancer_controller(const Ref<RubiconDancerController> p_dancer_controller);
-    Ref<RubiconDancerController> get_dancer_controller() const;
+    void set_reference_visual(Node2D* p_visual);
+    Node2D* get_reference_visual() const;
 
-    void set_sprite(const Ref<Node2D> p_sprite);
-    Ref<Node2D> get_sprite() const;
+    RubiconDancerController* get_dancer_controller() const;
+
+    PackedStringArray get_configuration_warnings() const override;
 
 protected:
+    void _notification(int p_what);
     static void _bind_methods();
+
+private:
+    RubiconDancerController* _dancer_controller = nullptr;
 };
 
 #endif
