@@ -10,7 +10,6 @@ class RubiconDancer3D : public Node3D {
     GDCLASS(RubiconDancer3D, Node3D);
 
 public:
-    Ref<RubiconDancerData> dancer_data;
     Node3D* reference_visual = nullptr;
 
     void set_reference_visual(Node3D* p_visual);

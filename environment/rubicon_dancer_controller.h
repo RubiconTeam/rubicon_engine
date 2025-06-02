@@ -3,7 +3,6 @@
 
 #include "scene/main/node.h"
 #include "scene/animation/animation_player.h"
-#include "../data/rubicon_dancer_data.h"
 #include "../rubicon_beat_syncer.h"
 #include "core/object/class_db.h"
 #include "core/object/gdvirtual.gen.inc"
@@ -16,27 +15,35 @@ class RubiconDancerController : public Node {
     GDCLASS(RubiconDancerController, Node);
 
 public:
-    String global_prefix;
-    String global_suffix;
-    int dance_index = 0;
-    bool freeze_dancing = false;
+    PackedStringArray data_dance_animations = PackedStringArray({"idle"});
+    bool data_force_dancing = true;
+    bool data_reset_animation_progress = true;
 
-    Ref<RubiconDancerData> dancer_data;
+    String status_global_prefix;
+    String status_global_suffix;
+    int status_dance_index = 0;
+    bool status_freeze_dancing = false;
 
-    void set_global_prefix(const String p_global_prefix);
-    String get_global_prefix() const;
+    void set_data_dance_animations(const PackedStringArray p_value);
+    PackedStringArray get_data_dance_animations() const;
 
-    void set_global_suffix(const String p_global_suffix);
-    String get_global_suffix() const;
+    void set_data_force_dancing(const bool p_value);
+    bool get_data_force_dancing() const;
 
-    void set_dance_index(const int p_dance_index);
-    int get_dance_index() const;
+    void set_data_reset_animation_progress(const bool p_value);
+    bool get_data_reset_animation_progress() const;
 
-    void set_freeze_dancing(const bool p_freeze_dancing);
-    bool get_freeze_dancing() const;
+    void set_status_global_prefix(const String p_global_prefix);
+    String get_status_global_prefix() const;
 
-    void set_dancer_data(const Ref<RubiconDancerData> p_dancer_data);
-    Ref<RubiconDancerData> get_dancer_data() const;
+    void set_status_global_suffix(const String p_global_suffix);
+    String get_status_global_suffix() const;
+
+    void set_status_dance_index(const int p_dance_index);
+    int get_status_dance_index() const;
+
+    void set_status_freeze_dancing(const bool p_freeze_dancing);
+    bool get_status_freeze_dancing() const;
 
     void set_internal_dance_behavior(const bool p_enabled);
     bool is_internally_dancing() const;
