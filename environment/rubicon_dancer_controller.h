@@ -70,4 +70,4 @@ private:
     bool _internal_dance_enabled = true;
 };
 
-#endif
+#endif // RUBICON_DANCER_CONTROLLER_H
