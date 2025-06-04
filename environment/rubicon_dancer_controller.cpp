@@ -190,5 +190,7 @@ void RubiconDancerController::_bind_methods() {
 
     ClassDB::bind_method(D_METHOD("dance", "custom_prefix", "custom_suffix"), &RubiconDancerController::dance);
     
-    GDVIRTUAL_BIND(_dance, "custom_prefix", "custom_suffix")
+    GDVIRTUAL_BIND(_dance, "custom_prefix", "custom_suffix");
+
+    GLOBAL_DEF_BASIC(PropertyInfo(Variant::PACKED_STRING_ARRAY, "rubicon_engine/environment/dancers/default_dance_animations"), PackedStringArray({"idle"}));
 }

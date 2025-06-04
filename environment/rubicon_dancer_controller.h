@@ -7,6 +7,7 @@
 #include "core/object/class_db.h"
 #include "core/object/gdvirtual.gen.inc"
 #include "core/variant/typed_array.h"
+#include "core/config/project_settings.h"
 
 template <typename T>
 class TypedArray;
@@ -15,7 +16,7 @@ class RubiconDancerController : public Node {
     GDCLASS(RubiconDancerController, Node);
 
 public:
-    PackedStringArray data_dance_animations = PackedStringArray({"idle"});
+    PackedStringArray data_dance_animations = static_cast<PackedStringArray>(GLOBAL_GET("rubicon_engine/environment/dancers/default_dance_animations"));
     bool data_force_dancing = true;
     bool data_reset_animation_progress = true;
 
