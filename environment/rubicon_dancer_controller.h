@@ -16,35 +16,35 @@ class RubiconDancerController : public Node {
     GDCLASS(RubiconDancerController, Node);
 
 public:
-    PackedStringArray data_dance_animations = static_cast<PackedStringArray>(GLOBAL_GET("rubicon_engine/environment/dancers/default_dance_animations"));
-    bool data_force_dancing = true;
-    bool data_reset_animation_progress = true;
+    PackedStringArray dance_animations = static_cast<PackedStringArray>(GLOBAL_GET("rubicon_engine/environment/dancers/default_dance_animations"));
+    bool force_dancing = true;
+    bool reset_animation_progress = true;
 
-    String status_global_prefix;
-    String status_global_suffix;
-    int status_dance_index = 0;
-    bool status_freeze_dancing = false;
+    String global_prefix;
+    String global_suffix;
+    int dance_index = 0;
+    bool freeze_dancing = false;
 
-    void set_data_dance_animations(const PackedStringArray p_value);
-    PackedStringArray get_data_dance_animations() const;
+    void set_dance_animations(const PackedStringArray p_value);
+    PackedStringArray get_dance_animations() const;
 
-    void set_data_force_dancing(const bool p_value);
-    bool get_data_force_dancing() const;
+    void set_force_dancing(const bool p_value);
+    bool get_force_dancing() const;
 
-    void set_data_reset_animation_progress(const bool p_value);
-    bool get_data_reset_animation_progress() const;
+    void set_reset_animation_progress(const bool p_value);
+    bool get_reset_animation_progress() const;
 
-    void set_status_global_prefix(const String p_global_prefix);
-    String get_status_global_prefix() const;
+    void set_global_prefix(const String p_global_prefix);
+    String get_global_prefix() const;
 
-    void set_status_global_suffix(const String p_global_suffix);
-    String get_status_global_suffix() const;
+    void set_global_suffix(const String p_global_suffix);
+    String get_global_suffix() const;
 
-    void set_status_dance_index(const int p_dance_index);
-    int get_status_dance_index() const;
+    void set_dance_index(const int p_dance_index);
+    int get_dance_index() const;
 
-    void set_status_freeze_dancing(const bool p_freeze_dancing);
-    bool get_status_freeze_dancing() const;
+    void set_freeze_dancing(const bool p_freeze_dancing);
+    bool get_freeze_dancing() const;
 
     void set_internal_dance_behavior(const bool p_enabled);
     bool is_internally_dancing() const;
@@ -58,7 +58,10 @@ public:
 
 protected:
     void _notification(int p_notification);
-    void _try_dance();
+    virtual void _try_dance();
+
+    virtual void _animation_player_unbind();
+    virtual void _animation_player_bind(AnimationPlayer *p_animation_player);
 
     static void _bind_methods();
 

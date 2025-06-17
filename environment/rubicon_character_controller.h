@@ -21,31 +21,39 @@ public:
         HOLD_STYLE_FREEZE
     };
 
-    Ref<RubiconCharacterIconData> data_icon;
-    PackedStringArray data_sing_animations = static_cast<PackedStringArray>(GLOBAL_GET("rubicon_engine/environment/characters/default_sing_animations"));
-    float data_sing_duration = 4.0;
-    HoldStyle data_hold_style = HoldStyle::HOLD_STYLE_FREEZE;
-    float data_repeat_loop_point = 0.125;
+    Ref<RubiconCharacterIconData> icon;
+    PackedStringArray sing_animations = static_cast<PackedStringArray>(GLOBAL_GET("rubicon_engine/environment/characters/default_sing_animations"));
+    float sing_duration = 4.0;
+    HoldStyle hold_style = HoldStyle::HOLD_STYLE_FREEZE;
+    float repeat_loop_point = 0.125;
+
+    String animation_miss_prefix = static_cast<String>(GLOBAL_GET("rubicon_engine/environment/characters/miss/prefix"));
+    String animation_miss_suffix = static_cast<String>(GLOBAL_GET("rubicon_engine/environment/characters/miss/suffix"));
 
     StringName special_animation_name;
     bool special_animation_override_dance = false;
     bool special_animation_override_sing = false;
     float special_animation_start_time = 0.0;
 
-    bool status_singing = false;
-    bool status_holding = false;
-    float status_sing_timer = 0.0;
-    bool status_missed = false;
-    bool status_freeze_singing = false;
+    bool singing = false;
+    bool holding = false;
+    float sing_timer = 0.0;
+    bool missed = false;
+    bool freeze_singing = false;
 
-    void set_data_icon(const Ref<RubiconCharacterIconData> p_value);
-    Ref<RubiconCharacterIconData> get_data_icon() const;
-    void set_data_sing_duration(const float p_value);
-    float get_data_sing_duration() const;
-    void set_data_hold_style(const HoldStyle p_value);
-    HoldStyle get_data_hold_style() const;
-    void set_data_repeat_loop_point(const float p_value);
-    float get_data_repeat_loop_point() const;
+    void set_icon(const Ref<RubiconCharacterIconData> p_value);
+    Ref<RubiconCharacterIconData> get_icon() const;
+    void set_sing_duration(const float p_value);
+    float get_sing_duration() const;
+    void set_hold_style(const HoldStyle p_value);
+    HoldStyle get_hold_style() const;
+    void set_repeat_loop_point(const float p_value);
+    float get_repeat_loop_point() const;
+
+    void set_animation_miss_prefix(const String p_value);
+    String get_animation_miss_prefix() const;
+    void set_animation_miss_suffix(const String p_value);
+    String get_animation_miss_suffix() const;
 
     void set_special_animation_name(const StringName &p_value);
     StringName get_special_animation_name() const;
@@ -56,19 +64,27 @@ public:
     void set_special_animation_start_time(const float p_value);
     float get_special_animation_start_time() const;
 
-    void set_status_singing(const bool p_value);
-    bool get_status_singing() const;
-    void set_status_holding(const bool p_value);
-    bool get_status_holding() const;
-    void set_status_sing_timer(const float p_value);
-    float get_status_sing_timer() const;
-    void set_status_missed(const bool p_value);
-    bool get_status_missed() const;
-    void set_status_freeze_singing(const bool p_value);
-    bool get_status_freeze_singing() const;
+    void set_singing(const bool p_value);
+    bool get_singing() const;
+    void set_holding(const bool p_value);
+    bool get_holding() const;
+    void set_sing_timer(const float p_value);
+    float get_sing_timer() const;
+    void set_missed(const bool p_value);
+    bool get_missed() const;
+    void set_freeze_singing(const bool p_value);
+    bool get_freeze_singing() const;
 
     void sing(const int p_direction, const bool p_holding, const bool p_miss, const String &p_custom_prefix, const String &p_custom_suffix);
     void play_special_animation(const StringName &p_name, const bool p_override_dance = true, const bool p_override_sing = true, const float p_start_time = 0.0);
+    void reset_special_animation_parameters();
+
+    void set_internal_sing(const bool p_value);
+    bool is_internally_singing() const;
+    void set_internal_play_special_animation(const bool p_value);
+    bool is_internally_playing_special_animation() const;
+    void set_internal_hold(const bool p_value);
+    bool is_internally_holding() const;
 
 protected:
     void _notification(int p_what);
@@ -83,6 +99,17 @@ protected:
 private:
     int _last_step = 0;
     TypedDictionary<int, bool> _indexes_holding;
+
+    bool _internal_sing_enabled = true;
+    bool _internal_play_special_animation_enabled = true;
+    bool _internal_hold_enabled = true;
+
+    void _animation_player_unbind() override;
+    void _animation_player_bind(AnimationPlayer *p_animation_player) override;
+
+    void _try_dance() override;
+
+    void _animation_finished(const StringName &p_anim_name);
 };
 
 VARIANT_ENUM_CAST(RubiconCharacterController::HoldStyle);
