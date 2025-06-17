@@ -10,12 +10,12 @@ RubiconBeatSyncer::TimeValue RubiconBeatSyncer::get_type() const {
     return type;
 }
 
-void RubiconBeatSyncer::set_status_enabled(bool p_enabled) {
-    status_enabled = p_enabled;
+void RubiconBeatSyncer::set_enabled(bool p_enabled) {
+    enabled = p_enabled;
 }
 
-bool RubiconBeatSyncer::get_status_enabled() const {
-    return status_enabled;
+bool RubiconBeatSyncer::get_enabled() const {
+    return enabled;
 }
 
 void RubiconBeatSyncer::set_value(const float p_value) {
@@ -71,7 +71,7 @@ void RubiconBeatSyncer::_notification(int p_notification) {
 }
 
 void RubiconBeatSyncer::_step_hit(const int p_step) {
-    if (!status_enabled)
+    if (!enabled)
         return;
 
     if ((p_step - _step_offset) % _bump_step == 0)
@@ -111,14 +111,12 @@ void RubiconBeatSyncer::_bind_methods() {
     ClassDB::bind_method("get_type", &RubiconBeatSyncer::get_type);
     ClassDB::bind_method(D_METHOD("set_value", "value"), &RubiconBeatSyncer::set_value);
     ClassDB::bind_method("get_value", &RubiconBeatSyncer::get_value);
-    ClassDB::bind_method(D_METHOD("set_status_enabled", "enabled"), &RubiconBeatSyncer::set_status_enabled);
-    ClassDB::bind_method("get_status_enabled", &RubiconBeatSyncer::get_status_enabled);
+    ClassDB::bind_method(D_METHOD("set_enabled", "enabled"), &RubiconBeatSyncer::set_enabled);
+    ClassDB::bind_method("get_enabled", &RubiconBeatSyncer::get_enabled);
 
     ADD_PROPERTY(PropertyInfo(Variant::INT, "type", PROPERTY_HINT_ENUM, "Measure,Beat,Step"), "set_type", "get_type");
     ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "value"), "set_value", "get_value");
-
-    ADD_GROUP("Status", "status_");
-    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "status_enabled"), "set_status_enabled", "get_status_enabled");
+    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "enabled"), "set_enabled", "get_enabled");
 
     ADD_SIGNAL(MethodInfo("bumped"));
 }

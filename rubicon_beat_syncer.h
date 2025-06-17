@@ -16,7 +16,7 @@ public:
     };
 
     TimeValue type = TIME_VALUE_MEASURE;
-    bool status_enabled = true;
+    bool enabled = true;
 
     void set_type(const TimeValue p_type);
     TimeValue get_type() const;
@@ -24,8 +24,8 @@ public:
     void set_value(const float p_value);
     float get_value() const;
 
-    void set_status_enabled(const bool p_enabled);
-    bool get_status_enabled() const;
+    void set_enabled(const bool p_enabled);
+    bool get_enabled() const;
 
 protected:
     void _notification(int p_notification);
