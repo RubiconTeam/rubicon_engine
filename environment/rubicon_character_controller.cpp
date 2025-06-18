@@ -336,6 +336,8 @@ void RubiconCharacterController::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_freeze_singing", "value"), &RubiconCharacterController::set_freeze_singing);
     ClassDB::bind_method("get_freeze_singing", &RubiconCharacterController::get_freeze_singing);
 
+    ClassDB::bind_method("get_directions_holding", &RubiconCharacterController::get_directions_holding);
+
     // Proprties
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "icon", PROPERTY_HINT_RESOURCE_TYPE, "RubiconCharacterIconData"), "set_icon", "get_icon");
     ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "sing_duration"), "set_sing_duration", "get_sing_duration");
