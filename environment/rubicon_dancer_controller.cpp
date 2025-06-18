@@ -130,14 +130,17 @@ void RubiconDancerController::_notification(int p_notification) {
                 Node* child = get_child(i);
 
                 AnimationPlayer* anim_player_child = Object::cast_to<AnimationPlayer>(child);
-                if (anim_player_child)
+                if (anim_player_child && !_animation_player)
                     _animation_player_bind(anim_player_child);
                 
                 RubiconBeatSyncer* beat_syncer_child = Object::cast_to<RubiconBeatSyncer>(child);
-                if (beat_syncer_child) {
+                if (beat_syncer_child && _beat_syncer) {
                     _beat_syncer = beat_syncer_child;
                     _beat_syncer->connect(SNAME("bumped"), callable_mp(this, &RubiconDancerController::_try_dance));
                 }
+
+                if (_animation_player && _beat_syncer)
+                    break;
             }
         } break;
     }
