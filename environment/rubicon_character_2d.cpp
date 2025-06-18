@@ -5,11 +5,17 @@ void RubiconCharacter2D::set_reference_visual(Node2D* p_visual) {
 }
 
 Node2D* RubiconCharacter2D::get_reference_visual() const {
-    return reference_visual;
+    if (reference_visual)
+        return reference_visual;
+    
+    return Object::cast_to<Node2D>(Variant());
 }
 
 RubiconCharacterController* RubiconCharacter2D::get_character_controller() const {
-    return _character_controller;
+    if (_character_controller)
+        return _character_controller;
+    
+    return Object::cast_to<RubiconCharacterController>(Variant());
 }
 
 PackedStringArray RubiconCharacter2D::get_configuration_warnings() const {

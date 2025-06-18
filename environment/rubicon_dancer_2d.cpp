@@ -5,11 +5,17 @@ void RubiconDancer2D::set_reference_visual(Node2D* p_visual) {
 }
 
 Node2D* RubiconDancer2D::get_reference_visual() const {
-    return reference_visual;
+    if (reference_visual)
+        return reference_visual;
+    
+    return Object::cast_to<Node2D>(Variant());
 }
 
 RubiconDancerController* RubiconDancer2D::get_dancer_controller() const {
-    return _dancer_controller;
+    if (_dancer_controller)
+        return _dancer_controller;
+    
+    return Object::cast_to<RubiconDancerController>(Variant());
 }
 
 PackedStringArray RubiconDancer2D::get_configuration_warnings() const {

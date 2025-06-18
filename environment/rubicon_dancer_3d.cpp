@@ -5,7 +5,10 @@ void RubiconDancer3D::set_reference_visual(Node3D* p_visual) {
 }
 
 Node3D* RubiconDancer3D::get_reference_visual() const {
-    return reference_visual;
+    if (reference_visual)
+        return reference_visual;
+    
+    return Object::cast_to<Node3D>(Variant());
 }
 
 RubiconDancerController* RubiconDancer3D::get_dancer_controller() const {

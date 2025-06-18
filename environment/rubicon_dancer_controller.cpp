@@ -65,11 +65,17 @@ bool RubiconDancerController::is_internally_dancing() const {
 }
 
 AnimationPlayer* RubiconDancerController::get_animation_player() const {
-    return _animation_player;
+    if (_animation_player)
+        return _animation_player;
+    
+    return Object::cast_to<AnimationPlayer>(Variant());
 }
 
 RubiconBeatSyncer* RubiconDancerController::get_beat_syncer() const {
-	return _beat_syncer;
+    if (_beat_syncer)
+	    return _beat_syncer;
+    
+    return Object::cast_to<RubiconBeatSyncer>(Variant());
 }
 
 void RubiconDancerController::dance_internal(const String &p_custom_prefix, const String &p_custom_suffix) {
