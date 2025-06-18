@@ -72,26 +72,30 @@ RubiconBeatSyncer* RubiconDancerController::get_beat_syncer() const {
 	return _beat_syncer;
 }
 
-void RubiconDancerController::dance(const String &p_custom_prefix, const String &p_custom_suffix) {
-    if (_internal_dance_enabled) {
-        String prefix = p_custom_prefix.is_empty() ? global_prefix : p_custom_prefix;
-        String suffix = p_custom_suffix.is_empty() ? global_suffix : p_custom_suffix;
+void RubiconDancerController::dance_internal(const String &p_custom_prefix, const String &p_custom_suffix) {
+    String prefix = p_custom_prefix.is_empty() ? global_prefix : p_custom_prefix;
+    String suffix = p_custom_suffix.is_empty() ? global_suffix : p_custom_suffix;
 
-        String anim_name = dance_animations[dance_index];
-        if (_animation_player->has_animation(prefix + anim_name + suffix))
-            anim_name = prefix + anim_name + suffix;
-        else
-            WARN_PRINT("No animation found with prefix and suffix, playing regular animation.");
+    String anim_name = dance_animations[dance_index];
+    if (_animation_player->has_animation(prefix + anim_name + suffix))
+        anim_name = prefix + anim_name + suffix;
+    else
+        WARN_PRINT("No animation found with prefix and suffix, playing regular animation.");
 
-        if (_animation_player->has_animation(anim_name)) 
-            _animation_player->play(anim_name);
+    if (_animation_player->has_animation(anim_name)) 
+        _animation_player->play(anim_name);
         
-        if (reset_animation_progress)
-            _animation_player->seek(0.0, true);
-    }
+    if (reset_animation_progress)
+        _animation_player->seek(0.0, true);
+
+    dance_index = (dance_index + 1) % dance_animations.size();
+}
+
+void RubiconDancerController::dance(const String &p_custom_prefix, const String &p_custom_suffix) {
+    if (_internal_dance_enabled)
+        dance_internal(p_custom_prefix, p_custom_suffix);
     
     GDVIRTUAL_CALL(_dance, p_custom_prefix, p_custom_suffix);
-    dance_index = (dance_index + 1) % dance_animations.size();
 }
 
 PackedStringArray RubiconDancerController::get_configuration_warnings() const {
@@ -190,7 +194,8 @@ void RubiconDancerController::_bind_methods() {
     ClassDB::bind_method("is_internally_dancing", &RubiconDancerController::is_internally_dancing);
 
     ClassDB::bind_method(D_METHOD("dance", "custom_prefix", "custom_suffix"), &RubiconDancerController::dance);
-    
+    ClassDB::bind_method(D_METHOD("dance_internal", "custom_prefix", "custom_suffix"), &RubiconDancerController::dance_internal);
+
     GDVIRTUAL_BIND(_dance, "custom_prefix", "custom_suffix");
 
     GLOBAL_DEF_BASIC(PropertyInfo(Variant::PACKED_STRING_ARRAY, "rubicon_engine/environment/dancers/default_dance_animations"), PackedStringArray({"idle"}));

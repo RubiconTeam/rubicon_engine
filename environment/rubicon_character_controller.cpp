@@ -159,91 +159,102 @@ bool RubiconCharacterController::is_internally_holding() const {
     return _internal_hold_enabled;
 }
 
+void RubiconCharacterController::sing_internal(const int p_direction, const bool p_holding, const bool p_miss, const String &p_custom_prefix, const String &p_custom_suffix) {
+    bool was_holding = _directions_holding.has(p_direction) && _directions_holding[p_direction];
+    _directions_holding[p_direction] = p_holding;
+    bool should_be_holding = _directions_holding.values().has(true);
+
+    sing_timer = 0.0;
+    singing = true;
+    holding = should_be_holding;
+    missed = p_miss && !should_be_holding;
+
+    if (!(was_holding && !p_holding && !missed)) {
+        String base_anim = animation_sing_animations[p_direction];
+
+        String prefix = p_custom_prefix;
+        if (prefix.is_empty())
+            prefix = global_prefix + (missed ? animation_miss_prefix : "");
+            
+        String suffix = p_custom_suffix;
+        if (suffix.is_empty())
+            suffix = (missed ? animation_miss_suffix : "") + global_suffix;
+            
+        String anim_name = prefix + base_anim + suffix;
+        if (get_animation_player()->has_animation(anim_name)) {
+            get_animation_player()->play(anim_name);
+        } else if (get_animation_player()->has_animation(base_anim)) {
+            WARN_PRINT(vformat("Animation player has no animation called \"%s\", defaulting to base animation \"%s\"", anim_name, base_anim));
+            get_animation_player()->play(base_anim);
+        } else {
+            WARN_PRINT(vformat("Animation player has no animation called \"%s\" and no base animation \"%s\".", anim_name, base_anim));
+        }
+
+        if (reset_animation_progress)
+            get_animation_player()->seek(0.0, true);
+    }
+}
+
 void RubiconCharacterController::sing(const int p_direction, const bool p_holding, const bool p_miss, const String &p_custom_prefix, const String &p_custom_suffix) {
     if (special_animation_override_sing)
         return;
     
-    if (_internal_sing_enabled) {
-        bool was_holding = _directions_holding.has(p_direction) && _directions_holding[p_direction];
-        _directions_holding[p_direction] = p_holding;
-        bool should_be_holding = _directions_holding.values().has(true);
-
-        sing_timer = 0.0;
-        singing = true;
-        holding = should_be_holding;
-        missed = p_miss && !should_be_holding;
-
-        if (!(was_holding && !p_holding && !missed)) {
-            String base_anim = animation_sing_animations[p_direction];
-
-            String prefix = p_custom_prefix;
-            if (prefix.is_empty())
-                prefix = global_prefix + (missed ? animation_miss_prefix : "");
-            
-            String suffix = p_custom_suffix;
-            if (suffix.is_empty())
-                suffix = (missed ? animation_miss_suffix : "") + global_suffix;
-            
-            String anim_name = prefix + base_anim + suffix;
-            if (get_animation_player()->has_animation(anim_name)) {
-                get_animation_player()->play(anim_name);
-            } else if (get_animation_player()->has_animation(base_anim)) {
-                WARN_PRINT(vformat("Animation player has no animation called \"%s\", defaulting to base animation \"%s\"", anim_name, base_anim));
-                get_animation_player()->play(base_anim);
-            } else {
-                WARN_PRINT(vformat("Animation player has no animation called \"%s\" and no base animation \"%s\".", anim_name, base_anim));
-            }
-
-            if (reset_animation_progress)
-                get_animation_player()->seek(0.0, true);
-        }
-    }
+    if (_internal_sing_enabled) 
+        sing_internal(p_direction, p_holding, p_miss, p_custom_prefix, p_custom_suffix);
 
     GDVIRTUAL_CALL(_sing, p_direction, p_holding, p_miss, p_custom_prefix, p_custom_suffix);
 }
 
-void RubiconCharacterController::play_special_animation(const StringName &p_name, const bool p_override_dance, const bool p_override_sing, const float p_start_time) {
-    if (_internal_play_special_animation_enabled) {
-        special_animation_name = p_name;
-        special_animation_override_dance = p_override_dance;
-        special_animation_override_sing = p_override_sing;
-        special_animation_start_time = p_start_time;
+void RubiconCharacterController::play_special_animation_internal(const StringName &p_name, const bool p_override_dance, const bool p_override_sing, const float p_start_time) {
+    special_animation_name = p_name;
+    special_animation_override_dance = p_override_dance;
+    special_animation_override_sing = p_override_sing;
+    special_animation_start_time = p_start_time;
 
-        if (get_animation_player()->has_animation(p_name)) {
-            get_animation_player()->play(p_name);
-            get_animation_player()->seek(p_start_time, true);
-        } else {
-            WARN_PRINT(vformat("Animation \"%s\" not found when trying to play a special animation.", p_name));
-        }
+    if (get_animation_player()->has_animation(p_name)) {
+        get_animation_player()->play(p_name);
+        get_animation_player()->seek(p_start_time, true);
+    } else {
+        WARN_PRINT(vformat("Animation \"%s\" not found when trying to play a special animation.", p_name));
     }
+}
+
+void RubiconCharacterController::play_special_animation(const StringName &p_name, const bool p_override_dance, const bool p_override_sing, const float p_start_time) {
+    if (_internal_play_special_animation_enabled)
+        play_special_animation_internal(p_name, p_override_dance, p_override_sing, p_start_time);
 
     GDVIRTUAL_CALL(_play_special_animation, p_name, p_override_dance, p_override_sing, p_start_time);
 }
 
-void RubiconCharacterController::hold() {
-    if (_internal_hold_enabled) {
-        sing_timer = 0.0;
+void RubiconCharacterController::hold_internal() {
+    sing_timer = 0.0;
 
-        switch (hold_style) {
-            case HOLD_STYLE_STEP_REPEAT: {
-                int cur_step = int(Math::floor(RubiconConductor::get_singleton()->get_current_step()));
-                if (_last_step != cur_step) 
-                    get_animation_player()->seek(0.0);
-                
-                    _last_step = cur_step;
-            } break;
-            case HOLD_STYLE_REPEAT: {
-                double current_time = get_animation_player()->get_current_animation_position();
-                if (current_time < repeat_loop_point)
-                    break;
-                
+    switch (hold_style) {
+        case HOLD_STYLE_STEP_REPEAT: {
+            int cur_step = int(Math::floor(RubiconConductor::get_singleton()->get_current_step()));
+            if (_last_step != cur_step) 
                 get_animation_player()->seek(0.0);
-            } break;
-            case HOLD_STYLE_FREEZE: {
-                get_animation_player()->seek(0.0);
-            } break;
-        }
+                
+                _last_step = cur_step;
+        } break;
+        case HOLD_STYLE_REPEAT: {
+            double current_time = get_animation_player()->get_current_animation_position();
+            if (current_time < repeat_loop_point)
+                break;
+                
+            get_animation_player()->seek(0.0);
+        } break;
+        case HOLD_STYLE_FREEZE: {
+            get_animation_player()->seek(0.0);
+        } break;
     }
+
+    GDVIRTUAL_CALL(_hold);
+}
+
+void RubiconCharacterController::hold() {
+    if (_internal_hold_enabled) 
+        hold_internal();
 
     GDVIRTUAL_CALL(_hold);
 }
@@ -353,6 +364,10 @@ void RubiconCharacterController::_bind_methods() {
     ClassDB::bind_method(D_METHOD("sing", "direction", "holding", "miss", "custom_prefix", "custom_suffix"), &RubiconCharacterController::sing);
     ClassDB::bind_method(D_METHOD("play_special_animation", "name", "override_dance", "override_sing", "start_time"), &RubiconCharacterController::play_special_animation);
     ClassDB::bind_method("reset_special_animation_parameters", &RubiconCharacterController::reset_special_animation_parameters);
+
+    ClassDB::bind_method(D_METHOD("sing_internal", "direction", "holding", "miss", "custom_prefix", "custom_suffix"), &RubiconCharacterController::sing_internal);
+    ClassDB::bind_method(D_METHOD("play_special_animation_internal", "name", "override_dance", "override_sing", "start_time"), &RubiconCharacterController::play_special_animation_internal);
+    ClassDB::bind_method("hold_internal", &RubiconCharacterController::hold_internal);
 
     // Internals
     ClassDB::bind_method(D_METHOD("set_internal_sing", "value"), &RubiconCharacterController::set_internal_sing);

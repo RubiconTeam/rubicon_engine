@@ -53,6 +53,7 @@ public:
     RubiconBeatSyncer* get_beat_syncer() const;
 
     void dance(const String &p_custom_prefix = "", const String &p_custom_suffix = "");
+    void dance_internal(const String &p_custom_prefix = "", const String &p_custom_suffix = "");
 
     PackedStringArray get_configuration_warnings() const override;
 

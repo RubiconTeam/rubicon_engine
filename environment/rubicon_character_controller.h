@@ -81,6 +81,8 @@ public:
 
     void sing(const int p_direction, const bool p_holding, const bool p_miss, const String &p_custom_prefix, const String &p_custom_suffix);
     void play_special_animation(const StringName &p_name, const bool p_override_dance = true, const bool p_override_sing = true, const float p_start_time = 0.0);
+    void hold();
+    
     void reset_special_animation_parameters();
 
     void set_internal_sing(const bool p_value);
@@ -90,11 +92,13 @@ public:
     void set_internal_hold(const bool p_value);
     bool is_internally_holding() const;
 
+    void sing_internal(const int p_direction, const bool p_holding, const bool p_miss, const String &p_custom_prefix, const String &p_custom_suffix);
+    void play_special_animation_internal(const StringName &p_name, const bool p_override_dance = true, const bool p_override_sing = true, const float p_start_time = 0.0);
+    void hold_internal();
+
 protected:
     void _notification(int p_what);
     static void _bind_methods();
-
-    void hold();
 
     GDVIRTUAL5(_sing, int, bool, bool, String, String);
     GDVIRTUAL4(_play_special_animation, StringName, bool, bool, float);
