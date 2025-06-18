@@ -35,6 +35,14 @@ float RubiconCharacterController::get_repeat_loop_point() const {
     return repeat_loop_point;
 }
 
+void RubiconCharacterController::set_animation_sing_animations(const PackedStringArray &p_value) {
+    animation_sing_animations = p_value;
+}
+
+PackedStringArray RubiconCharacterController::get_animation_sing_animations() const {
+    return animation_sing_animations;
+}
+
 void RubiconCharacterController::set_animation_miss_prefix(const String p_value) {
     animation_miss_prefix = p_value;
 }
@@ -123,6 +131,10 @@ bool RubiconCharacterController::get_freeze_singing() const {
     return freeze_singing;
 }
 
+TypedDictionary<int, bool> RubiconCharacterController::get_directions_holding() const {
+    return _directions_holding;
+}
+
 void RubiconCharacterController::set_internal_sing(const bool p_value) {
     _internal_sing_enabled = p_value;
 }
@@ -152,9 +164,9 @@ void RubiconCharacterController::sing(const int p_direction, const bool p_holdin
         return;
     
     if (_internal_sing_enabled) {
-        bool was_holding = _indexes_holding.has(p_direction) && _indexes_holding[p_direction];
-        _indexes_holding[p_direction] = p_holding;
-        bool should_be_holding = _indexes_holding.values().has(true);
+        bool was_holding = _directions_holding.has(p_direction) && _directions_holding[p_direction];
+        _directions_holding[p_direction] = p_holding;
+        bool should_be_holding = _directions_holding.values().has(true);
 
         sing_timer = 0.0;
         singing = true;
@@ -162,7 +174,7 @@ void RubiconCharacterController::sing(const int p_direction, const bool p_holdin
         missed = p_miss && !should_be_holding;
 
         if (!(was_holding && !p_holding && !missed)) {
-            String base_anim = sing_animations[p_direction];
+            String base_anim = animation_sing_animations[p_direction];
 
             String prefix = p_custom_prefix;
             if (prefix.is_empty())
@@ -263,7 +275,7 @@ void RubiconCharacterController::_animation_finished(const StringName &p_anim_na
 
 void RubiconCharacterController::_try_dance() {
     bool is_not_singing = !singing || (singing && !freeze_singing && sing_timer >= RubiconConductor::get_singleton()->get_current_time_change()->get_step_value() * 0.001 * sing_duration);
-    bool override_dancing = !special_animation_name.is_empty() && override_dancing;
+    bool override_dancing = !special_animation_name.is_empty() && special_animation_override_dance;
     if (override_dancing || !is_not_singing)
         return;
     
@@ -297,6 +309,8 @@ void RubiconCharacterController::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_repeat_loop_point", "value"), &RubiconCharacterController::set_repeat_loop_point);
     ClassDB::bind_method("get_repeat_loop_point", &RubiconCharacterController::get_repeat_loop_point);
 
+    ClassDB::bind_method(D_METHOD("set_animation_sing_animations", "value"), &RubiconCharacterController::set_animation_sing_animations);
+    ClassDB::bind_method("get_animation_sing_animations", &RubiconCharacterController::get_animation_sing_animations);
     ClassDB::bind_method(D_METHOD("set_animation_miss_prefix", "value"), &RubiconCharacterController::set_animation_miss_prefix);
     ClassDB::bind_method("get_animation_miss_prefix", &RubiconCharacterController::get_animation_miss_prefix);
     ClassDB::bind_method(D_METHOD("set_animation_miss_suffix", "value"), &RubiconCharacterController::set_animation_miss_suffix);
@@ -329,6 +343,7 @@ void RubiconCharacterController::_bind_methods() {
     ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "repeat_loop_point"), "set_repeat_loop_point", "get_repeat_loop_point");
 
     ADD_GROUP("Animation", "animation_");
+    ADD_PROPERTY(PropertyInfo(Variant::PACKED_STRING_ARRAY, "animation_sing_animations"), "set_animation_sing_animations", "get_animation_sing_animations");
     ADD_PROPERTY(PropertyInfo(Variant::STRING, "animation_miss_prefix"), "set_animation_miss_prefix", "get_animation_miss_prefix");
     ADD_PROPERTY(PropertyInfo(Variant::STRING, "animation_miss_suffix"), "set_animation_miss_suffix", "get_animation_miss_suffix");
 

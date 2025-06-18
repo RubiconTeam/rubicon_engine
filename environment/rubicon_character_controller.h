@@ -22,11 +22,11 @@ public:
     };
 
     Ref<RubiconCharacterIconData> icon;
-    PackedStringArray sing_animations = static_cast<PackedStringArray>(GLOBAL_GET("rubicon_engine/environment/characters/default_sing_animations"));
     float sing_duration = 4.0;
     HoldStyle hold_style = HoldStyle::HOLD_STYLE_FREEZE;
     float repeat_loop_point = 0.125;
 
+    PackedStringArray animation_sing_animations = static_cast<PackedStringArray>(GLOBAL_GET("rubicon_engine/environment/characters/default_sing_animations"));
     String animation_miss_prefix = static_cast<String>(GLOBAL_GET("rubicon_engine/environment/characters/miss/prefix"));
     String animation_miss_suffix = static_cast<String>(GLOBAL_GET("rubicon_engine/environment/characters/miss/suffix"));
 
@@ -50,6 +50,8 @@ public:
     void set_repeat_loop_point(const float p_value);
     float get_repeat_loop_point() const;
 
+    void set_animation_sing_animations(const PackedStringArray &p_value);
+    PackedStringArray get_animation_sing_animations() const;
     void set_animation_miss_prefix(const String p_value);
     String get_animation_miss_prefix() const;
     void set_animation_miss_suffix(const String p_value);
@@ -75,6 +77,8 @@ public:
     void set_freeze_singing(const bool p_value);
     bool get_freeze_singing() const;
 
+    TypedDictionary<int, bool> get_directions_holding() const;
+
     void sing(const int p_direction, const bool p_holding, const bool p_miss, const String &p_custom_prefix, const String &p_custom_suffix);
     void play_special_animation(const StringName &p_name, const bool p_override_dance = true, const bool p_override_sing = true, const float p_start_time = 0.0);
     void reset_special_animation_parameters();
@@ -98,7 +102,7 @@ protected:
 
 private:
     int _last_step = 0;
-    TypedDictionary<int, bool> _indexes_holding;
+    TypedDictionary<int, bool> _directions_holding;
 
     bool _internal_sing_enabled = true;
     bool _internal_play_special_animation_enabled = true;
