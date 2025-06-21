@@ -8,6 +8,8 @@
 #include "environment/rubicon_dancer_controller.h"
 #include "environment/rubicon_dancer_2d.h"
 #include "environment/rubicon_dancer_3d.h"
+#include "events/rubicon_event_data.h"
+#include "events/rubicon_event_meta.h"
 
 void initialize_rubicon_engine_module(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE)
@@ -26,6 +28,10 @@ void initialize_rubicon_engine_module(ModuleInitializationLevel p_level) {
 	GDREGISTER_CLASS(RubiconDancerController);
 	GDREGISTER_CLASS(RubiconDancer2D);
 	GDREGISTER_CLASS(RubiconDancer3D);
+
+	// Rubicon.Events
+	GDREGISTER_CLASS(RubiconEventData);
+	GDREGISTER_CLASS(RubiconEventMeta);
 }
 
 void uninitialize_rubicon_engine_module(ModuleInitializationLevel p_level) {
