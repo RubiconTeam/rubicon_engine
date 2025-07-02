@@ -231,11 +231,13 @@ void RubiconCharacterController::hold_internal() {
 
     switch (hold_style) {
         case HOLD_STYLE_STEP_REPEAT: {
-            int cur_step = int(Math::floor(RubiconConductor::get_singleton()->get_current_step()));
+            bool conductor_exists = get_beat_syncer() && get_beat_syncer()->get_conductor();
+
+            int cur_step = conductor_exists ? int(Math::floor(get_beat_syncer()->get_conductor()->get_current_step())) : 0.0;
             if (_last_step != cur_step) 
                 get_animation_player()->seek(0.0);
                 
-                _last_step = cur_step;
+            _last_step = cur_step;
         } break;
         case HOLD_STYLE_REPEAT: {
             double current_time = get_animation_player()->get_current_animation_position();
@@ -285,7 +287,12 @@ void RubiconCharacterController::_animation_finished(const StringName &p_anim_na
 }
 
 void RubiconCharacterController::_try_dance() {
-    bool is_not_singing = !singing || (singing && !freeze_singing && sing_timer >= RubiconConductor::get_singleton()->get_current_time_change()->get_step_value() * 0.001 * sing_duration);
+    bool has_passed_singing_threshold = get_beat_syncer() 
+        && get_beat_syncer()->get_conductor()
+        && !(get_beat_syncer()->get_conductor()->get_current_time_change().is_null())
+        && sing_timer >= get_beat_syncer()->get_conductor()->get_current_time_change()->get_step_value() * 0.001 * sing_duration;
+
+    bool is_not_singing = !singing || (singing && !freeze_singing && has_passed_singing_threshold);
     bool override_dancing = !special_animation_name.is_empty() && special_animation_override_dance;
     if (override_dancing || !is_not_singing)
         return;

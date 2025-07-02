@@ -2,6 +2,7 @@
 #define BEAT_SYNCER_H
 
 #include "scene/main/node.h"
+#include "modules/rubicon_core/rubicon_conductor.h"
 #include "modules/rubicon_core/chart/rubicon_time_change.h"
 #include "core/object/class_db.h"
 
@@ -27,6 +28,9 @@ public:
     void set_enabled(const bool p_enabled);
     bool get_enabled() const;
 
+    void set_conductor(RubiconConductor* p_value);
+    RubiconConductor* get_conductor();
+
 protected:
     void _notification(int p_notification);
     static void _bind_methods();
@@ -41,7 +45,7 @@ private:
     float _cached_beat = 0.0f;
     float _bump_measure = 0.5f;
 
-    bool _initialized = false;
+    RubiconConductor* _conductor;
 
     void _step_hit(const int p_step);
     void _time_change_reached(const Ref<RubiconTimeChange> p_current_time_change);

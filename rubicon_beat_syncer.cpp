@@ -1,5 +1,4 @@
 #include "rubicon_beat_syncer.h"
-#include "modules/rubicon_core/rubicon_conductor.h"
 #include "core/math/math_funcs.h"
 
 void RubiconBeatSyncer::set_type(const TimeValue p_type) {
@@ -16,6 +15,30 @@ void RubiconBeatSyncer::set_enabled(bool p_enabled) {
 
 bool RubiconBeatSyncer::get_enabled() const {
     return enabled;
+}
+
+void RubiconBeatSyncer::set_conductor(RubiconConductor* p_value) {
+    if (_conductor) {
+        _conductor->disconnect(SNAME("step_hit"), callable_mp(this, &RubiconBeatSyncer::_step_hit));
+        _conductor->disconnect(SNAME("time_change_reached"), callable_mp(this, &RubiconBeatSyncer::_time_change_reached));
+    }
+
+    _conductor = p_value;
+
+    if (!_conductor)
+        return;
+    
+    _conductor->connect(SNAME("step_hit"), callable_mp(this, &RubiconBeatSyncer::_step_hit));
+    _conductor->connect(SNAME("time_change_reached"), callable_mp(this, &RubiconBeatSyncer::_time_change_reached));
+
+    _time_change_reached(_conductor->get_current_time_change());
+}
+
+RubiconConductor* RubiconBeatSyncer::get_conductor() {
+    if (!_conductor)
+        return Object::cast_to<RubiconConductor>(Variant());
+    
+    return _conductor;
 }
 
 void RubiconBeatSyncer::set_value(const float p_value) {
@@ -49,23 +72,12 @@ float RubiconBeatSyncer::get_value() const {
 
 void RubiconBeatSyncer::_notification(int p_notification) {
     switch(p_notification) {
-        case NOTIFICATION_READY: {
-            if (_initialized)
-                return;
-
-            _initialized = true;
-
-            RubiconConductor::get_singleton()->connect(SNAME("step_hit"), callable_mp(this, &RubiconBeatSyncer::_step_hit));
-            RubiconConductor::get_singleton()->connect(SNAME("time_change_reached"), callable_mp(this, &RubiconBeatSyncer::_time_change_reached));
-
-            _time_change_reached(RubiconConductor::get_singleton()->get_current_time_change());
-        }   break;
         case NOTIFICATION_PREDELETE: {
-            if (!_initialized)
+            if (!_conductor)
                 return;
 
-            RubiconConductor::get_singleton()->disconnect(SNAME("step_hit"), callable_mp(this, &RubiconBeatSyncer::_step_hit));
-            RubiconConductor::get_singleton()->disconnect(SNAME("time_change_reached"), callable_mp(this, &RubiconBeatSyncer::_time_change_reached));
+            _conductor->disconnect(SNAME("step_hit"), callable_mp(this, &RubiconBeatSyncer::_step_hit));
+            _conductor->disconnect(SNAME("time_change_reached"), callable_mp(this, &RubiconBeatSyncer::_time_change_reached));
         }   break;
     }
 }
@@ -89,9 +101,6 @@ void RubiconBeatSyncer::_time_change_reached(const Ref<RubiconTimeChange> p_curr
 }
 
 void RubiconBeatSyncer::_set_bump_measure(const float p_value) {
-    if (!_initialized)
-        _notification(NOTIFICATION_READY);
-    
     _bump_measure = p_value;
     _cached_beat = RubiconConductor::measure_to_beats(_bump_measure, 4.0f);
     _cached_step = RubiconConductor::measure_to_steps(_bump_measure, 4.0f, 4.0f);
