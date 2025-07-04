@@ -4,7 +4,7 @@
 #include "core/io/resource.h"
 #include "core/variant/typed_array.h"
 #include "core/variant/typed_dictionary.h"
-#include "modules/rubicon_core/chart/rubicon_time_change.h"
+#include "modules/rubicon_core/rubicon_time_change.h"
 
 class RubiconEventData : public Resource {
     GDCLASS(RubiconEventData, Resource);

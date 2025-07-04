@@ -3,7 +3,7 @@
 
 #include "scene/main/node.h"
 #include "modules/rubicon_core/rubicon_conductor.h"
-#include "modules/rubicon_core/chart/rubicon_time_change.h"
+#include "modules/rubicon_core/rubicon_time_change.h"
 #include "core/object/class_db.h"
 
 class RubiconBeatSyncer : public Node {
